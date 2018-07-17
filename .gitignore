@@ -4,3 +4,4 @@ proto/*.py
 grpc_client/glide.*
 grpc_client/vendor
 grpc_client/client
+.DS_Store
