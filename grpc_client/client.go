@@ -13,24 +13,25 @@ import (
 func main() {
 	HOST := "grpc.sandbox.iot.enlight.skf.com"
 	PORT := "50051"
-	CLIENT_CRT := "cert/client.crt"
-	CLIENT_KEY := "cert/client.key"
-	CA_CERT := "cert/ca.crt"
+
+	clientCrt := "cert/client.crt"
+	clientKey := "cert/client.key"
+	caCert := "cert/ca.crt"
 
 	var err error
 
 	// log.Info("Setup Client")
 	client := iot.CreateClient()
 	transportOption, err := grpc.WithTransportCredentials(
-		HOST, CLIENT_CRT, CLIENT_KEY, CA_CERT,
+		HOST, clientCrt, clientKey, caCert,
 	)
 	if err != nil {
 		log.
 			WithError(err).
 			WithField("serverName", HOST).
-			WithField("clientCrt", CLIENT_CRT).
-			WithField("clientKey", CLIENT_KEY).
-			WithField("caCert", CA_CERT).
+			WithField("clientCrt", clientCrt).
+			WithField("clientKey", clientKey).
+			WithField("caCert", caCert).
 			Error("grpc.WithTransportCredentials")
 		return
 	}
