@@ -7,7 +7,6 @@ import sys
 import socket
 
 def get_nodes(csv_file):
-	loc = socket.gethostname()
 	node_id = defaultdict(dict)
 
 	with open(csv_file, 'r') as f:
@@ -48,6 +47,7 @@ def ingest_node(t, data, unit, node_id):
 	os.popen(cmd).read()
 
 try:
+	loc = socket.gethostname()
 	sensor = init_sensor()
 	node_id = get_nodes('node_id.csv')
 
