@@ -58,7 +58,7 @@ try:
 			ingest_node(t, sensor.data.pressure, 'hPa', node_id[loc]['pres'])
 			ingest_node(t, sensor.data.humidity, '%', node_id[loc]['hum'])
 			if sensor.data.heat_stable:
-				ingest_node(t, sensor.data.gas_resistance, "Ohm", node_id[loc]['res'])
+				ingest_node(t, sensor.data.gas_resistance, "Ohm", node_id[loc]['gas'])
 		time.sleep(60)
 
 except KeyboardInterrupt:
