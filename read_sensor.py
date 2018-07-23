@@ -6,6 +6,8 @@ import csv
 import sys
 import socket
 
+SAMPLE_INT = 60
+
 def get_nodes(csv_file):
 	node_id = defaultdict(dict)
 
@@ -37,7 +39,7 @@ def init_sensor():
 		curr_time = time.time()
 		if sensor.get_sensor_data() and sensor.data.heat_stable:
 			sensor.data.gas_resistance
-			time.sleep(60)
+			time.sleep(SAMPLE_INT)
 
 	return sensor
 
@@ -59,7 +61,7 @@ try:
 			ingest_node(t, sensor.data.humidity, '%', node_id[loc]['hum'])
 			if sensor.data.heat_stable:
 				ingest_node(t, sensor.data.gas_resistance, "Ohm", node_id[loc]['gas'])
-		time.sleep(60)
+		time.sleep(SAMPLE_INT)
 
 except KeyboardInterrupt:
 	pass
