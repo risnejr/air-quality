@@ -6,3 +6,4 @@ grpc_client/vendor
 grpc_client/client
 .DS_Store
 node_id.csv
+.vscode
