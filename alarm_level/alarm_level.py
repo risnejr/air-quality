@@ -50,7 +50,6 @@ class AlarmLevel:
 
 		return x, model
 
-
 	def define_model(self):
 		model = Sequential()
 		model.add(Dense(32, activation='relu', input_shape=(4,)))
