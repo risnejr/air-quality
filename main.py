@@ -1,4 +1,5 @@
-from alarm_level.alarm_level import main
+from alarm_level.alarm_level import AlarmLevel
 
 if __name__ == '__main__':
-	main()
+	desk = AlarmLevel('desk')
+	desk.main()
