@@ -3,15 +3,20 @@ This is a repository for user generated alarm levels in an office environment us
 ## Required files
 ```
 .
-├── alarm_level.py
-├── cert
-│   ├── ca.crt
-│   ├── client.crt
-│   └── client.key
-├── dial_grpc.py
-├── node_id.csv
-└── proto
-    └── grpcapi.proto
+├── alarm_level
+│   ├── __init__.py
+│   ├── alarm_level.py
+│   ├── cert                <---- 
+│   │   ├── ca.crt
+│   │   ├── client.crt
+│   │   └── client.key
+│   ├── dial_grpc.py
+│   ├── grpcapi_pb2.py
+│   ├── grpcapi_pb2_grpc.py
+│   └── proto
+│       └── grpcapi.proto
+├── main.py
+└── node_id.csv             <---- 
 ```
 ## How to generate code from proto files
 ```
