@@ -16,7 +16,7 @@ This is a repository for user generated alarm levels in an office environment us
 │   └── proto
 │       └── grpcapi.proto
 ├── main.py
-└── node_id.csv             <---- 
+└── node_ids.csv            <---- 
 ```
 ## Generate code from proto files
 ```
