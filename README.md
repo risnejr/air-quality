@@ -3,15 +3,16 @@ Intent of repository is to fetch sensor data from **BME680** and ingest the data
 ## Required files
 ```
 .
-├── cert
-│   ├── ca.crt
-│   ├── client.crt
-│   └── client.key
-├── grpc_client
-│   ├── client.go
-│   ├── glide.lock
-│   └── glide.yaml
-├── node_id.csv
+├── client
+│   ├── Gopkg.lock
+│   ├── Gopkg.toml
+│   ├── cert            <----
+│   │   ├── ca.crt
+│   │   ├── client.crt
+│   │   └── client.key
+│   ├── client
+│   └── client.go
+├── node_ids.csv        <----
 └── read_sensor.py
 ```
 ---
