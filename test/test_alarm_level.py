@@ -1,5 +1,5 @@
-import unittest
 import json
+import unittest
 import alarm_level.alarm_level
 from alarm_level.alarm_level import AlarmLevel
 
@@ -8,8 +8,9 @@ class TestAlarmLevel(unittest.TestCase):
 	def test_no_asset(self):
 		self.test_1 = AlarmLevel('', 'test/test_spacing.csv')
 		self.test_2 = AlarmLevel('not present', 'test/test_spacing.csv')
-		self.assertRaises(KeyError, self.test_1.read_node_ids())
-		self.assertRaises(KeyError, self.test_2.read_node_ids())
+		with self.assertRaises(KeyError):
+			self.test_1.read_node_ids()
+		self.assertRaises(KeyError, self.test_2.read_node_ids)
 
 	def test_csv_spacing(self):
 		self.test = AlarmLevel('test', 'test/test_spacing.csv')

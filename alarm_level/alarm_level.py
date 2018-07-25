@@ -33,9 +33,11 @@ class AlarmLevel:
 					self.node_ids[row[0]].update({row[1]: row[2]})
 
 		try:
+			self.node_ids = dict(self.node_ids)
 			self.node_ids = self.node_ids[self.location]
 		except KeyError:
-			print("Asset couldn't be found in provided .csv file")
+			raise
+
 
 	def run(self, data):
 		if data.node_id == self.node_ids['vote']:
