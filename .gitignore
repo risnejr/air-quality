@@ -1,8 +1,6 @@
 __pycache__
-cert
-proto/*.py
-grpc_client/vendor
-grpc_client/client
 .DS_Store
-node_id.csv
 .vscode
+client/cert
+client/vendor
+node_ids.csv

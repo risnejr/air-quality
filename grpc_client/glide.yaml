@@ -1,4 +1,0 @@
-package: .
-import:
-- package: github.com/SKF/go-utility
-- package: github.com/SKF/go-enlight-sdk

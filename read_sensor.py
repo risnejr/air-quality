@@ -8,14 +8,15 @@ import socket
 
 SAMPLE_INT = 60
 
-def get_nodes(csv_file):
-	node_id = defaultdict(dict)
+def read_ids(csv_file):
+	node_ids = defaultdict(dict)
 
 	with open(csv_file, 'r') as f:
-		for row in csv.reader(f, delimiter=','):
-			node_id[row[0]].update({row[1]: row[2]})
+		next(f)
+		for row in csv.reader(f, skipinitialspace=True, delimiter=','):
+			node_ids[row[0]].update({row[1]: row[2]})
 
-	return node_id
+	return node_ids
 
 def init_sensor():
 	sensor = bme680.BME680()
@@ -44,24 +45,24 @@ def init_sensor():
 	return sensor
 
 def ingest_node(t, data, unit, node_id):
-	cmd = ('./grpc_client/client --datetime={} --data={} --unit={} --id={}'
+	cmd = ('./client/client --time={} --data={} --unit={} --id={}'
 			.format(t, data, unit, node_id))
 	os.popen(cmd).read()
 
-try:
-	loc = socket.gethostname()
-	sensor = init_sensor()
-	node_id = get_nodes('node_id.csv')
+asset = socket.gethostname()
+sensor = init_sensor()
+node_ids = read_ids('node_ids.csv')
 
-	while True:
-		if sensor.get_sensor_data():
-			t = int(round(time.time() * 1000))
-			ingest_node(t, sensor.data.temperature, 'C', node_id[loc]['temp'])
-			ingest_node(t, sensor.data.pressure, 'hPa', node_id[loc]['pres'])
-			ingest_node(t, sensor.data.humidity, '%', node_id[loc]['hum'])
+while True:
+	if sensor.get_sensor_data():
+		t = int(round(time.time() * 1000))
+		try:
+			ingest_node(t, sensor.data.temperature, 'C', node_ids[asset]['temp'])
+			ingest_node(t, sensor.data.pressure, 'hPa', node_ids[asset]['pres'])
+			ingest_node(t, sensor.data.humidity, '%', node_ids[asset]['hum'])
 			if sensor.data.heat_stable:
-				ingest_node(t, sensor.data.gas_resistance, "Ohm", node_id[loc]['gas'])
-		time.sleep(SAMPLE_INT)
-
-except KeyboardInterrupt:
-	pass
+				ingest_node(t, sensor.data.gas_resistance, "Ohm", node_ids[asset]['gas'])
+		except KeyError as e:
+			print('Asset {} not present in .csv file')
+			raise
+	time.sleep(SAMPLE_INT)
