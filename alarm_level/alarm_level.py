@@ -15,54 +15,69 @@ from keras.utils import normalize
 
 class AlarmLevel:
 
-    def __init__(self, function_loc, csv_file):
+    def __init__(self, asset, csv_file, model_name='model_weights.h5'):
         self.x = np.zeros((1, 4))
-        self.model = Sequential()
+        self.asset = asset
         self.csv_file = csv_file
-        self.location = function_loc
-        self.node_ids = defaultdict(dict)
-        self.csv_file = csv_file
+        self.model_name = model_name
+        self.asset_ids_completed = False
         self.classes = ['Good', 'Ok', 'Bad']
         self.answers = {'Good': np.array([[1, 0, 0]]),
                         'Ok':   np.array([[0, 1, 0]]),
                         'Bad':  np.array([[0, 0, 1]])}
 
-    def read_node_ids(self):
+        self.read_ids()
+        self.define_model()
+        self.grpc_stream()
+
+    def read_ids(self):
+        self.node_ids = defaultdict(dict)
+
         with open(self.csv_file, 'r') as f:
             next(f)
             for row in csv.reader(f, skipinitialspace=True, delimiter=','):
                 if len(row) == 3:
                     self.node_ids[row[0]].update({row[1]: row[2]})
 
+    def asset_ids(self):
         try:
             self.node_ids = dict(self.node_ids)
-            self.node_ids = self.node_ids[self.location]
-        except KeyError:
+            self.node_ids = self.node_ids[self.asset]
+            self.asset_ids_completed = True
+        except KeyError as e:
+            print('Asset {} does not exist'.format(e))
             raise
 
     def run(self, data):
-        if data.node_id == self.node_ids['vote']:
-            y_true = self.answers[data.node_data.question_answers[0]]
-            self.x = normalize(self.x)
-            self.train(y_true)
-
-        elif data.node_id == self.node_ids['temp']:
-            self.x[0, 0] = data.node_data.data_point.coordinate.y
-
-        elif data.node_id == self.node_ids['pres']:
-            self.x[0, 1] = data.node_data.data_point.coordinate.y
-
-        elif data.node_id == self.node_ids['hum']:
-            self.x[0, 2] = data.node_data.data_point.coordinate.y
-
-        elif data.node_id == self.node_ids['gas']:
-            self.x[0, 3] = data.node_data.data_point.coordinate.y
-            if self.x.all():
+        if not self.asset_ids_completed:
+            self.asset_ids()
+        try:
+            if data.node_id == self.node_ids['vote']:
+                y_true = self.answers[data.node_data.question_answers[0]]
                 self.x = normalize(self.x)
-                y_pred = self.predict()
-                print(self.classes[np.argmax(y_pred)], y_pred)
+                self.train(y_true)
+
+            if data.node_id == self.node_ids['temp']:
+                self.x[0, 0] = data.node_data.data_point.coordinate.y
+
+            elif data.node_id == self.node_ids['pres']:
+                self.x[0, 1] = data.node_data.data_point.coordinate.y
+
+            elif data.node_id == self.node_ids['hum']:
+                self.x[0, 2] = data.node_data.data_point.coordinate.y
+
+            elif data.node_id == self.node_ids['gas']:
+                self.x[0, 3] = data.node_data.data_point.coordinate.y
+                if self.x.all():
+                    self.x = normalize(self.x)
+                    y_pred = self.predict()
+                    print(self.classes[np.argmax(y_pred)], y_pred)
+        except KeyError as e:
+            print('Asset is missing key {}'.format(e))
+            raise
 
     def define_model(self):
+        self.model = Sequential()
         self.model.add(Dense(32, activation='relu', input_shape=(4,)))
         self.model.add(Dense(3, activation='softmax'))
         adam = Adam()
@@ -71,9 +86,9 @@ class AlarmLevel:
                            metrics=['accuracy'])
 
         try:
-            self.model.load_weights('aq_model_weights.h5')
+            self.model.load_weights(self.model_name)
         except IOError:
-            print('No file named aq_model_weights.h5')
+            print('No file named {}'.format(self.model_name))
 
     def train(self, y):
         self.model.fit(self.x, y, epochs=1)
@@ -89,16 +104,10 @@ class AlarmLevel:
 
     def main(self):
         t0 = time.time()
-        self.define_model()
-        self.read_node_ids()
-        self.grpc_stream()
-
         for data in self.response:
-            print(data)
             self.run(data)
             if time.time() - t0 > 60:
-                print('Saving model...')
-                self.model.save_weights('aq_model_weights.h5')
+                self.model.save_weights(self.model_name)
                 t0 = time.time()
 
         self.channel.close()
