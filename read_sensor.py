@@ -6,7 +6,7 @@ import csv
 import sys
 import socket
 
-SAMPLE_INT = 60
+SAMPLE_INT = 10
 
 def read_ids(csv_file):
 	node_ids = defaultdict(dict)
