@@ -8,6 +8,7 @@ import dial_grpc
 
 
 app = Flask(__name__)
+app.config['CORS_HEADERS'] = 'Content-Type'
 CORS(app)
 
 
