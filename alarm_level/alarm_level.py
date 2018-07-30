@@ -71,7 +71,11 @@ class AlarmLevel:
                 if self.x.all():
                     self.x = normalize(self.x)
                     y_pred = self.predict()
-                    print(self.classes[np.argmax(y_pred)], y_pred)
+                    data = grpcapi_pb2.NodeData(created_at=int(round(time.time() * 1000)),
+                                                content_type=6,
+                                                question_answers=[self.classes[np.argmax(y_pred)]])
+                    self.stub.IngestNodeData(grpcapi_pb2.IngestNodeDataInput(node_id=self.node_ids['pred'],
+                                                                             node_data=data))
         except KeyError as e:
             print('Asset is missing key {}'.format(e))
             raise
@@ -99,6 +103,7 @@ class AlarmLevel:
     def grpc_stream(self):
         self.channel = dial_grpc.dial()
         self.stub = grpcapi_pb2_grpc.IoTStub(self.channel)
+        self.stub.DeepPing(grpcapi_pb2.PrimitiveVoid())
         self.response = self.stub.GetNodeDataStream(grpcapi_pb2.
                                                     GetNodeDataStreamInput())
 
