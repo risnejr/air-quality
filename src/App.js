@@ -50,8 +50,7 @@ class App extends Component {
         node_id: process.env.REACT_APP_NODE_ID,
         answer: [ans]
       })
-    }).then(response => response.json())
-      .then(jsondata => console.log(jsondata))
+    })
   }
 
   setEmoji(ans) {
