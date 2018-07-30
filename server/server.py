@@ -22,7 +22,6 @@ def sse_pack(d):
 
 @app.route('/grpc')
 def grpc_generator():
-    # with dial_grpc.dial() as channel:
     channel = dial_grpc.dial()
     stub = grpcapi_pb2_grpc.IoTStub(channel)
     stream = stub.GetNodeDataStream(grpcapi_pb2.
@@ -30,10 +29,14 @@ def grpc_generator():
 
     def event_stream(event_id, channel):
         for data in stream:
+            if data.node_data.data_point.coordinate.y == 0:
+                node_data = data.node_data.question_answers[0]
+            else:
+                node_data = data.node_data.data_point.coordinate.y
             msg = ({'event': 'delta',
                     'data': json.dumps({
                         'node_id': data.node_id,
-                        'node_data': data.node_data.data_point.coordinate.y
+                        'node_data': node_data
                         }),
                     'id': event_id})
             yield sse_pack(msg)
