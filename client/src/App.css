@@ -26,6 +26,12 @@
   top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 100px;
-  color: black;
+}
+
+.progress {
+  position: relative;
+  float: left;
+  top: 28%;
+  left: 45%;
+  color: #185cd3 !important;
 }

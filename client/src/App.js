@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Typography, AppBar, Toolbar, Menu, MenuItem } from '@material-ui/core';
+import { Card, Typography, AppBar, Toolbar, Menu, MenuItem, CircularProgress} from '@material-ui/core';
 import './App.css';
 
 const primary = '#185cd3'
@@ -8,7 +8,8 @@ const Info = props => {
   return (
     <Card className={'card ' + props.class}>
       <Typography variant="display3">{props.title}</Typography>
-      <Typography className="value" variant={props.variant}>{props.value} {props.unit}</Typography>
+      {props.value !== "" && <Typography className="value" variant={props.variant}>{props.value} {props.unit}</Typography>}
+      {props.value === "" && <CircularProgress className="progress"/>}
     </Card>
   )
 }
@@ -23,7 +24,6 @@ const Emoji = props => (
       {props.symbol}
   </span>
 );
-
 const LEVEL = {
   Good: <Emoji symbol="😎"/>,
   Ok: <Emoji symbol="😐"/>,
@@ -34,17 +34,18 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      temp: NaN,
-      hum: NaN,
-      pres: NaN,
-      gas: NaN,
-      pred: NaN,
-      vote: NaN,
+      temp: "",
+      hum: "",
+      pres: "",
+      gas: "",
+      pred: "",
+      vote: "",
     }
   }
 
   componentDidMount() {
-    let source = new EventSource("http://localhost:5000/grpc")
+    this.asset = window.location.href.split("/").slice(-1)[0]
+    let source = new EventSource("http://localhost:5000/grpc/" + this.asset)
     let data = {}
 
     source.addEventListener('delta', e => {
@@ -75,7 +76,7 @@ class App extends Component {
       <div>
         <AppBar position="static" style={{ backgroundColor: '#185cd3' }}>
           <Toolbar>
-            <Typography variant="title" style={{ color: '#ffffff' }}>Demo</Typography>
+            <Typography variant="title" style={{ color: '#ffffff' }}>{this.asset}</Typography>
           </Toolbar>
         </AppBar>
         <div className="App">
