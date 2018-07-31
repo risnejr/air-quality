@@ -26,3 +26,4 @@ server/cert
 __pycache__
 
 .vscode
+node_ids.csv
