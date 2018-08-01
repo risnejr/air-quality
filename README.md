@@ -1,4 +1,4 @@
-# Air Quality
+# Read Sensor
 Intent of repository is to fetch sensor data from **BME680** and ingest the data to SKF's **Enlight**. 
 ## Required files
 ```
