@@ -1,5 +1,5 @@
-from alarm_level.alarm_level import AlarmLevel
+from aq_level.aq_level import AQLevel
 
 if __name__ == '__main__':
-    demo = AlarmLevel('demo', 'node_ids.csv')
+    demo = AQLevel('demo', 'node_ids.csv')
     demo.main()

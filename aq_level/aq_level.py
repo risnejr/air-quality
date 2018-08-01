@@ -1,6 +1,6 @@
-import alarm_level.dial_grpc as dial_grpc
-import alarm_level.grpcapi_pb2 as grpcapi_pb2
-import alarm_level.grpcapi_pb2_grpc as grpcapi_pb2_grpc
+import aq_level.dial_grpc as dial_grpc
+import aq_level.grpcapi_pb2 as grpcapi_pb2
+import aq_level.grpcapi_pb2_grpc as grpcapi_pb2_grpc
 
 import numpy as np
 import time
@@ -13,7 +13,7 @@ from keras.optimizers import Adam
 from keras.utils import normalize
 
 
-class AlarmLevel:
+class AQLevel:
 
     def __init__(self, asset, csv_file, model_name='model_weights.h5'):
         self.x = np.zeros((1, 4))

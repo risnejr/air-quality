@@ -6,13 +6,13 @@ def dial():
     PORT = "50051"
 
     try:
-        with open('alarm_level/cert/ca.crt', mode='rb') as f:
+        with open('aq_level/cert/ca.crt', mode='rb') as f:
             trusted_certs = f.read()
 
-        with open('alarm_level/cert/client.crt', mode='rb') as f:
+        with open('aq_level/cert/client.crt', mode='rb') as f:
             client_cert = f.read()
 
-        with open('alarm_level/cert/client.key', mode='rb') as f:
+        with open('aq_level/cert/client.key', mode='rb') as f:
             client_key = f.read()
     except Exception as e:
         print('failed-to-read-cert-keys', e)
