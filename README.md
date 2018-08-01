@@ -1,5 +1,5 @@
 # Node ID Config
-Generates the required file `node_ids.csv` for `aq_*` projects.
+Generates the required file `node_ids.csv` for `aq-*` projects.
 
 # Required files
 ```
