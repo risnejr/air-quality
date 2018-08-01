@@ -7,7 +7,9 @@ import argparse
 SHORTHAND = {'temperature': 'temp',
              'humidity': 'hum',
              'pressure': 'pres',
-             'gas': 'gas'}
+             'gas': 'gas',
+             'vote': 'vote',
+             'prediction': 'pred'}
 
 
 def generate_dict(asset='', parent_id=''):
