@@ -4,6 +4,12 @@ import grpcapi_pb2_grpc
 import argparse
 
 
+SHORTHAND = {'temperature': 'temp',
+             'humidity': 'hum',
+             'pressure': 'pres',
+             'gas': 'gas'}
+
+
 def generate_dict(asset='', parent_id=''):
     response = stub.GetChildNodes(grpcapi_pb2.PrimitiveString(value=parent_id))
     try:
@@ -22,11 +28,12 @@ def generate_dict(asset='', parent_id=''):
 
 def generate_csv():
     with open('node_ids.csv', 'w') as f:
-        f.write('asset,inspection_point,node_id\n')
+        f.write('Asset,Inspection Point,Node ID\n')
         for asset in node_ids:
             for inspection_point in node_ids[asset]:
+                ip = SHORTHAND[inspection_point]
                 f.write('{},{},{}\n'.format(asset,
-                                            inspection_point,
+                                            ip,
                                             node_ids[asset][inspection_point]))
 
 
