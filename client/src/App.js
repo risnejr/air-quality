@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { Card, Typography, AppBar, Toolbar, Menu, MenuItem, CircularProgress} from '@material-ui/core';
+import { Card, Typography, AppBar, Toolbar, CircularProgress} from '@material-ui/core';
 import './App.css';
-
-const primary = '#185cd3'
 
 const Info = props => {
   return (
@@ -24,6 +22,7 @@ const Emoji = props => (
       {props.symbol}
   </span>
 );
+
 const LEVEL = {
   Good: <Emoji symbol="😎"/>,
   Ok: <Emoji symbol="😐"/>,
@@ -44,28 +43,29 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.asset = window.location.href.split("/").slice(-1)[0]
-    let source = new EventSource("http://localhost:5000/grpc/" + this.asset)
+    let asset = window.location.href.split("/").reverse()[0]
+    let funcLoc = window.location.href.split("/").reverse()[1]
+    let source = new EventSource("http://localhost:5000/grpc/" + funcLoc + "/" + asset)
     let data = {}
 
     source.addEventListener('delta', e => {
       data = JSON.parse(e.data)
-      if (data.node_id === process.env.REACT_APP_TEMP) {
+      if (data.inspection_point === 'temperature') {
         this.setState({temp: data.node_data.toFixed(2)})
       }
-      else if (data.node_id === process.env.REACT_APP_PRES) {
+      else if (data.inspection_point === 'pressure') {
         this.setState({pres: data.node_data.toFixed(2)})
       }
-      else if (data.node_id === process.env.REACT_APP_HUM) {
+      else if (data.inspection_point === 'humidity') {
         this.setState({hum: data.node_data.toFixed(2)})
       }
-      else if (data.node_id === process.env.REACT_APP_GAS) {
+      else if (data.inspection_point === 'gas') {
         this.setState({gas: (data.node_data/1000).toFixed(2)})
       }
-      else if (data.node_id === process.env.REACT_APP_PRED) {
+      else if (data.inspection_point === 'air_quality') {
         this.setState({pred: data.node_data})
       }
-      else if (data.node_id === process.env.REACT_APP_VOTE) {
+      else if (data.inspection_point === 'vote') {
         this.setState({vote: data.node_data})
       }
     })
