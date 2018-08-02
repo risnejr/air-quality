@@ -2,17 +2,18 @@ import grpc
 
 
 def dial():
-    HOST = "grpc.sandbox.iot.enlight.skf.com"
-    PORT = "50051"
+    HOST = 'grpc.sandbox.iot.enlight.skf.com'
+    PORT = '50051'
+    CERT = '../certs/iot/'
 
     try:
-        with open('aq_level/cert/ca.crt', mode='rb') as f:
+        with open(CERT + 'ca.crt', mode='rb') as f:
             trusted_certs = f.read()
 
-        with open('aq_level/cert/client.crt', mode='rb') as f:
+        with open(CERT + 'client.crt', mode='rb') as f:
             client_cert = f.read()
 
-        with open('aq_level/cert/client.key', mode='rb') as f:
+        with open(CERT + 'client.key', mode='rb') as f:
             client_key = f.read()
     except Exception as e:
         print('failed-to-read-cert-keys', e)
