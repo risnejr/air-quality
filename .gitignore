@@ -2,4 +2,4 @@ __pycache__
 .vscode
 .DS_Store
 cert
-node_ids.csv
+config.json
