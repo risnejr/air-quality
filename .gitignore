@@ -1,6 +1,4 @@
 __pycache__
 .DS_Store
 .vscode
-client/cert
 client/vendor
-node_ids.csv

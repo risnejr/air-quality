@@ -14,9 +14,9 @@ func dialGRPC() iot.IoTClient {
 	HOST := "grpc.sandbox.iot.enlight.skf.com"
 	PORT := "50051"
 
-	CLIENTCRT := "client/cert/client.crt"
-	CLIENTKEY := "client/cert/client.key"
-	CACRT := "client/cert/ca.crt"
+	CLIENTCRT := "../certs/iot/client.crt"
+	CLIENTKEY := "../certs/iot/client.key"
+	CACRT := "../certs/iot/ca.crt"
 
 	log.Info("CreateClient")
 	client := iot.CreateClient()

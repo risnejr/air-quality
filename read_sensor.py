@@ -1,20 +1,8 @@
-from collections import defaultdict
 import bme680
 import time
 import os
-import csv
 import socket
-
-
-def read_ids(csv_file):
-    node_ids = defaultdict(dict)
-
-    with open(csv_file, 'r') as f:
-        next(f)
-        for row in csv.reader(f, skipinitialspace=True, delimiter=','):
-            node_ids[row[0]].update({row[1]: row[2]})
-
-    return node_ids
+import json
 
 
 def init_sensor():
@@ -40,22 +28,27 @@ def ingest_node(t, data, unit, node_id):
     os.popen(cmd).read()
 
 
-SAMPLE_INT = 30
+def read_data(node_ids, sampling_interval):
+    while True:
+        if sensor.get_sensor_data():
+            t = int(round(time.time() * 1000))
+            try:
+                ingest_node(t, sensor.data.temperature, 'C', node_ids['temperature'])
+                ingest_node(t, sensor.data.pressure, 'hPa', node_ids['pressure'])
+                ingest_node(t, sensor.data.humidity, '%', node_ids['humidity'])
+                if sensor.data.heat_stable:
+                    ingest_node(t, sensor.data.gas_resistance, "Ohm", node_ids['gas'])
+            except KeyError as e:
+                print('Asset {} not present in .csv file'.format(e))
+                raise
+        time.sleep(sampling_interval)
 
-asset = socket.gethostname()
-sensor = init_sensor()
-node_ids = read_ids('node_ids.csv')
 
-while True:
-    if sensor.get_sensor_data():
-        t = int(round(time.time() * 1000))
-        try:
-            ingest_node(t, sensor.data.temperature, 'C', node_ids[asset]['temp'])
-            ingest_node(t, sensor.data.pressure, 'hPa', node_ids[asset]['pres'])
-            ingest_node(t, sensor.data.humidity, '%', node_ids[asset]['hum'])
-            if sensor.data.heat_stable:
-                ingest_node(t, sensor.data.gas_resistance, "Ohm", node_ids[asset]['gas'])
-        except KeyError as e:
-            print('Asset {} not present in .csv file'.format(e))
-            raise
-    time.sleep(SAMPLE_INT)
+if __name__ == '__main__':
+    func_loc, asset = socket.gethostname().split('-')
+
+    with open('../config.json', 'r') as f:
+        node_ids = json.load(f)[func_loc][asset]
+
+    sensor = init_sensor()
+    read_data(node_ids, 30)
