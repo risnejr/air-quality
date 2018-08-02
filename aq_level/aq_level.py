@@ -15,10 +15,12 @@ from keras.utils import normalize
 
 class AQLevel:
 
-    def __init__(self, asset, csv_file, model_name='model_weights.h5'):
+    def __init__(self, functional_location, asset,
+                 node_ids, model_name='model_weights.h5'):
         self.x = np.zeros((1, 4))
+        self.fl = functional_location
         self.asset = asset
-        self.csv_file = csv_file
+        self.node_ids = node_ids
         self.model_name = model_name
         self.asset_ids_completed = False
         self.classes = ['Good', 'Ok', 'Bad']
@@ -26,26 +28,16 @@ class AQLevel:
                         'Ok':   np.array([[0, 1, 0]]),
                         'Bad':  np.array([[0, 0, 1]])}
 
-        self.read_ids()
         self.define_model()
         self.grpc_stream()
-
-    def read_ids(self):
-        self.node_ids = defaultdict(dict)
-
-        with open(self.csv_file, 'r') as f:
-            next(f)
-            for row in csv.reader(f, skipinitialspace=True, delimiter=','):
-                if len(row) == 3:
-                    self.node_ids[row[0]].update({row[1]: row[2]})
 
     def asset_ids(self):
         try:
             self.node_ids = dict(self.node_ids)
-            self.node_ids = self.node_ids[self.asset]
+            self.node_ids = self.node_ids[self.fl][self.asset]
             self.asset_ids_completed = True
         except KeyError as e:
-            print('Asset {} does not exist'.format(e))
+            print('Asset/Functional Location {} does not exist'.format(e))
             raise
 
     def run(self, data):
@@ -57,13 +49,13 @@ class AQLevel:
                 self.x = normalize(self.x)
                 self.train(y_true)
 
-            if data.node_id == self.node_ids['temp']:
+            if data.node_id == self.node_ids['temperature']:
                 self.x[0, 0] = data.node_data.data_point.coordinate.y
 
-            elif data.node_id == self.node_ids['pres']:
+            elif data.node_id == self.node_ids['pressure']:
                 self.x[0, 1] = data.node_data.data_point.coordinate.y
 
-            elif data.node_id == self.node_ids['hum']:
+            elif data.node_id == self.node_ids['humidity']:
                 self.x[0, 2] = data.node_data.data_point.coordinate.y
 
             elif data.node_id == self.node_ids['gas']:
@@ -74,7 +66,7 @@ class AQLevel:
                     data = grpcapi_pb2.NodeData(created_at=int(round(time.time() * 1000)),
                                                 content_type=6,
                                                 question_answers=[self.classes[np.argmax(y_pred)]])
-                    self.stub.IngestNodeData(grpcapi_pb2.IngestNodeDataInput(node_id=self.node_ids['pred'],
+                    self.stub.IngestNodeData(grpcapi_pb2.IngestNodeDataInput(node_id=self.node_ids['air_quality'],
                                                                              node_data=data))
         except KeyError as e:
             print('Asset is missing key {}'.format(e))
