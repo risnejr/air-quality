@@ -24,6 +24,7 @@ yarn-error.log*
 cert
 vendor
 *.zip
-label
+vote
 .DS_Store
 .vscode
+config.json

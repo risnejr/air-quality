@@ -3,7 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"time"
+
+	"github.com/tidwall/gjson"
 
 	"github.com/SKF/go-enlight-sdk/grpc"
 	"github.com/SKF/go-enlight-sdk/services/iot"
@@ -65,22 +68,25 @@ func dialGRPC() iot.IoTClient {
 }
 
 func handleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	type QA struct {
-		NodeID string   `json:"node_id"`
-		Answer []string `json:"answer"`
+	type Vote struct {
+		FuncLoc string   `json:"func_loc"`
+		Asset   string   `json:"asset"`
+		Answer  []string `json:"answer"`
 	}
 
-	var body QA
+	var body Vote
 	var client = dialGRPC()
 	defer client.Close()
+
+	jsonFile, _ := ioutil.ReadFile("config.json")
+	jsonString := string(jsonFile)
 
 	err := json.Unmarshal([]byte(request.Body), &body)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
 
-	nodeID := body.NodeID
-
+	nodeID := gjson.Get(jsonString, body.FuncLoc+"."+body.Asset+".vote").String()
 	nodeData := api.NodeData{
 		CreatedAt:       time.Now().Unix() * 1000,
 		ContentType:     api.NodeDataContentType_QUESTION_ANSWERS,
