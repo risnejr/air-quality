@@ -37,7 +37,7 @@ root_id = stub.GetParentNode(grpcapi_pb2.PrimitiveString(value=args.id)).id
 
 data = generate_json(parent_id=root_id)
 
-with open('config.json', 'w') as f:
+with open('../config.json', 'w') as f:
     json.dump(data, f, indent=2)
 
 channel.close()
