@@ -1,0 +1,5 @@
+Asset,Inspection Point,Node ID
+
+test,0
+test,1,uuid_1,redunant information
+test,2,uuid_2
