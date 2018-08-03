@@ -41,13 +41,17 @@ class App extends Component {
   label(ans) {
     this.setEmoji(ans)
 
+    let funcLoc = window.location.pathname.split("/").reverse()[1]
+    let asset = window.location.pathname.split("/").reverse()[0]
+
     fetch(process.env.REACT_APP_API_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        node_id: process.env.REACT_APP_NODE_ID,
+        func_loc: funcLoc,
+        asset: asset,
         answer: [ans]
       })
     })
