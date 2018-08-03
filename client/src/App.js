@@ -32,6 +32,9 @@ const LEVEL = {
 class App extends Component {
   constructor(props) {
     super(props);
+    this.url = new URL(window.location.href)
+    this.funcLoc = this.url.searchParams.get("func_loc")
+    this.asset = this.url.searchParams.get("asset")
     this.state = {
       temp: "",
       hum: "",
@@ -43,8 +46,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.funcLoc = window.location.pathname.split("/").reverse()[1]
-    this.asset = window.location.pathname.split("/").reverse()[0]
     let source = new EventSource("http://localhost:5000/grpc/" + this.funcLoc + "/" + this.asset)
     let data = {}
 
