@@ -43,9 +43,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    let asset = window.location.href.split("/").reverse()[0]
-    let funcLoc = window.location.href.split("/").reverse()[1]
-    let source = new EventSource("http://localhost:5000/grpc/" + funcLoc + "/" + asset)
+    this.funcLoc = window.location.pathname.split("/").reverse()[1]
+    this.asset = window.location.pathname.split("/").reverse()[0]
+    let source = new EventSource("http://localhost:5000/grpc/" + this.funcLoc + "/" + this.asset)
     let data = {}
 
     source.addEventListener('delta', e => {
@@ -76,7 +76,9 @@ class App extends Component {
       <div>
         <AppBar position="static" style={{ backgroundColor: '#185cd3' }}>
           <Toolbar>
-            <Typography variant="title" style={{ color: '#ffffff' }}>{this.asset}</Typography>
+            <Typography variant="title" style={{ color: '#ffffff' }}>
+              <Emoji symbol='🏡'/> {String(this.funcLoc).split("_").join(" ").toUpperCase()} <Emoji symbol='👉'/> {String(this.asset).toUpperCase()}
+            </Typography>
           </Toolbar>
         </AppBar>
         <div className="App">
