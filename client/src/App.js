@@ -19,8 +19,11 @@ const initialState = {
 }
 
 class App extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    this.url = new URL(window.location.href)
+    this.funcLoc = this.url.searchParams.get("func_loc")
+    this.asset = this.url.searchParams.get("asset")
     this.state = initialState;
   }
 
@@ -41,17 +44,14 @@ class App extends Component {
   label(ans) {
     this.setEmoji(ans)
 
-    let funcLoc = window.location.pathname.split("/").reverse()[1]
-    let asset = window.location.pathname.split("/").reverse()[0]
-
     fetch(process.env.REACT_APP_API_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        func_loc: funcLoc,
-        asset: asset,
+        func_loc: this.funcLoc,
+        asset: this.asset,
         answer: [ans]
       })
     })
