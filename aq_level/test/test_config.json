@@ -1,0 +1,10 @@
+{
+    "test": {
+        "test": {
+            "temperature": "uuid",
+            "humidity": "uuid",
+            "pressure": "uuid",
+            "wrong one": "uuid"
+        }
+    }
+}
