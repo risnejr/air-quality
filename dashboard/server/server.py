@@ -52,3 +52,8 @@ def grpc_generator(func_loc, asset):
         channel.close()
 
     return Response(event_stream(0, channel), mimetype='text/event-stream')
+
+
+if __name__ == '__main__':
+    app.debug = True
+    app.run()
