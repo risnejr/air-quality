@@ -5,6 +5,15 @@ import socket
 import json
 
 
+def internet(host='8.8.8.8', port=53, timeout=3):
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        return True
+    except Exception:
+        return False
+
+
 def init_sensor():
     sensor = bme680.BME680()
 
@@ -22,6 +31,7 @@ def init_sensor():
     return sensor
 
 
+# TODO Add buffer flag
 def ingest_node(t, data, unit, node_id):
     cmd = ('./client/client --time={} --data={} --unit={} --id={}'
            .format(t, data, unit, node_id))
@@ -32,15 +42,18 @@ def read_data(node_ids, sampling_interval):
     while True:
         if sensor.get_sensor_data():
             t = int(round(time.time() * 1000))
-            try:
-                ingest_node(t, sensor.data.temperature, 'C', node_ids['temperature'])
-                ingest_node(t, sensor.data.pressure, 'hPa', node_ids['pressure'])
-                ingest_node(t, sensor.data.humidity, '%', node_ids['humidity'])
-                if sensor.data.heat_stable:
-                    ingest_node(t, sensor.data.gas_resistance, "Ohm", node_ids['gas'])
-            except KeyError as e:
-                print('Asset {} not present in .csv file'.format(e))
-                raise
+            if not internet():
+                pass
+            else:
+                try:
+                    ingest_node(t, sensor.data.temperature, 'C', node_ids['temperature'])
+                    ingest_node(t, sensor.data.pressure, 'hPa', node_ids['pressure'])
+                    ingest_node(t, sensor.data.humidity, '%', node_ids['humidity'])
+                    if sensor.data.heat_stable:
+                        ingest_node(t, sensor.data.gas_resistance, "Ohm", node_ids['gas'])
+                except KeyError as e:
+                    print('Asset {} not present in .csv file'.format(e))
+                    raise
         time.sleep(sampling_interval)
 
 

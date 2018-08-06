@@ -2,55 +2,70 @@
 
 
 [[projects]]
+  digest = "1:25c9e530b198a0d93daaf83cba14370d0f7cdf9dd63746cd425e8ff0bd9800a1"
   name = "github.com/SKF/go-enlight-sdk"
   packages = [
     "grpc",
     "services/iot",
-    "services/iot/iotgrpcapi"
+    "services/iot/iotgrpcapi",
   ]
+  pruneopts = "UT"
   revision = "cc9f21fbe32b381b892aea7b208154d318bf175a"
 
 [[projects]]
+  digest = "1:994b5e581e63f5f9df2b4dc99b24141c4d155e08a73b4b36aebc9b5e6c53aa4c"
   name = "github.com/SKF/go-utility"
   packages = ["log"]
+  pruneopts = "UT"
   revision = "54ded8d98251ebd1090d6ec4039b4c6b5f347a76"
   version = "20180417"
 
 [[projects]]
+  digest = "1:17fe264ee908afc795734e8c4e63db2accabaf57326dbf21763a7d6b86096260"
   name = "github.com/golang/protobuf"
   packages = [
     "proto",
     "ptypes",
     "ptypes/any",
     "ptypes/duration",
-    "ptypes/timestamp"
+    "ptypes/timestamp",
   ]
+  pruneopts = "UT"
   revision = "b4deda0973fb4c70b50d226b1af49f3da59f5265"
   version = "v1.1.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:1b38c2fb861ca02b8da61a0c9b6e3a1436f41bc308bd258cabd0a928f0d45d0c"
   name = "github.com/johntdyer/slack-go"
   packages = ["."]
+  pruneopts = "UT"
   revision = "95fac1160b220c5abcf8b0ef88e9c3cb213c09f4"
 
 [[projects]]
+  digest = "1:96b1549f68b1172b79923a91be484ec4613c2647129227ee720e51fbaee95282"
   name = "github.com/johntdyer/slackrus"
   packages = ["."]
+  pruneopts = "UT"
   revision = "3992f319fd0ac349483279ef74742cd787841cba"
 
 [[projects]]
+  digest = "1:9e9193aa51197513b3abcb108970d831fbcf40ef96aa845c4f03276e1fa316d2"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
+  pruneopts = "UT"
   revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
   version = "v1.0.5"
 
 [[projects]]
+  digest = "1:3f3a05ae0b95893d90b9b3b5afdb79a9b3d96e4e36e099d841ae602e4aca0da8"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
+  pruneopts = "UT"
   revision = "a49355c7e3f8fe157a85be2f77e6e269a0f89602"
 
 [[projects]]
+  digest = "1:446065b6c9c947d777019bfa0b90f05fc8a9b69e5b37aeb44b589d89a0419c56"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -59,20 +74,24 @@
     "http2/hpack",
     "idna",
     "internal/timeseries",
-    "trace"
+    "trace",
   ]
+  pruneopts = "UT"
   revision = "cffdcf672aee934982473246bc7e9a8ba446aa9b"
 
 [[projects]]
+  digest = "1:3364d01296ce7eeca363e3d530ae63a2092d6f8efb85fb3d101e8f6d7de83452"
   name = "golang.org/x/sys"
   packages = [
     "unix",
-    "windows"
+    "windows",
   ]
+  pruneopts = "UT"
   revision = "1b2967e3c290b7c545b3db0deeda16e9be4f98a2"
 
 [[projects]]
   branch = "master"
+  digest = "1:48a65666e8f196369b8428f77eb405b507ca40aab043cfcbc1fb36ad122b748d"
   name = "golang.org/x/text"
   packages = [
     "collate",
@@ -90,16 +109,20 @@
     "unicode/bidi",
     "unicode/cldr",
     "unicode/norm",
-    "unicode/rangetable"
+    "unicode/rangetable",
   ]
+  pruneopts = "UT"
   revision = "0605a8320aceb4207a5fb3521281e17ec2075476"
 
 [[projects]]
+  digest = "1:601e63e7d4577f907118bec825902505291918859d223bce015539e79f1160e3"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
+  pruneopts = "UT"
   revision = "e92b116572682a5b432ddd840aeaba2a559eeff1"
 
 [[projects]]
+  digest = "1:c9c4df9e275979eaa1076a8c5fdec8ce3f0d26ebafc644c2fbbcc964f13c0040"
   name = "google.golang.org/grpc"
   packages = [
     ".",
@@ -125,14 +148,20 @@
     "stats",
     "status",
     "tap",
-    "transport"
+    "transport",
   ]
+  pruneopts = "UT"
   revision = "7a6a684ca69eb4cae85ad0a484f2e531598c047b"
   version = "v1.12.2"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "19a5a526ae2d32fdd8fb3d1de88b4af84799106f960b497a3e1a7df72212415a"
+  input-imports = [
+    "github.com/SKF/go-enlight-sdk/grpc",
+    "github.com/SKF/go-enlight-sdk/services/iot",
+    "github.com/SKF/go-enlight-sdk/services/iot/iotgrpcapi",
+    "github.com/SKF/go-utility/log",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
