@@ -1,15 +1,7 @@
 # Read Sensor
-Intent of repository is to fetch sensor data from **BME680** and ingest the data to SKF's **Enlight**.
-## Required files
-```
-.
-├── client
-│   └── client
-└── read_sensor.py
-```
+Fetches sensor data from a **BME680** sensor and ingest the data to SKF's **Enlight**.
 ## Build to Raspberry Pi Zero
 ```
-$ cd client
 $ env GOOS=linux GOARCH=arm GOARM=6 go build -o client
 ```
 ---
