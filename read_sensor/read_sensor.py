@@ -6,11 +6,14 @@ import json
 
 
 def internet(host='8.8.8.8', port=53, timeout=3):
+    global recover
+
     try:
         socket.setdefaulttimeout(timeout)
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
         return True
     except Exception:
+        recover = True
         return False
 
 
@@ -31,19 +34,44 @@ def init_sensor():
     return sensor
 
 
-# TODO Add buffer flag
 def ingest_node(t, data, unit, node_id):
     cmd = ('./client/client --time={} --data={} --unit={} --id={}'
            .format(t, data, unit, node_id))
     os.popen(cmd).read()
 
 
+def buffer_data(t):
+    backfill[node_ids['temperature']]['data'].append((t, sensor.data.temperature))
+    backfill[node_ids['pressure']]['data'].append((t, sensor.data.pressure))
+    backfill[node_ids['humidity']]['data'].append((t, sensor.data.humidity))
+    if sensor.data.heat_stable:
+        backfill[node_ids['gas']]['data'].append((t, sensor.data.gas_resistance))
+
+
+def backfill_data():
+    global backfill
+
+    for node_id in backfill.keys():
+        for t, value in backfill[node_id]['data']:
+            ingest_node(t, value, backfill[node_id]['unit'], node_id)
+
+    backfill = {node_ids['temperature']: {'unit': 'C', 'data': []},
+                node_ids['pressure']: {'unit': 'hPa', 'data': []},
+                node_ids['humidity']: {'unit': 'hPa', 'data': []},
+                node_ids['gas']: {'unit': 'hPa', 'data': []}}
+
+
 def read_data(node_ids, sampling_interval):
+    global recover
+
     while True:
         if sensor.get_sensor_data():
             t = int(round(time.time() * 1000))
             if not internet():
-                pass
+                buffer_data(t)
+            elif recover:
+                backfill_data()
+                recover = False
             else:
                 try:
                     ingest_node(t, sensor.data.temperature, 'C', node_ids['temperature'])
@@ -63,5 +91,10 @@ if __name__ == '__main__':
     with open('../config.json', 'r') as f:
         node_ids = json.load(f)[func_loc][asset]
 
+    recover = False
+    backfill = {node_ids['temperature']: {'unit': 'C', 'data': []},
+                node_ids['pressure']: {'unit': 'hPa', 'data': []},
+                node_ids['humidity']: {'unit': 'hPa', 'data': []},
+                node_ids['gas']: {'unit': 'hPa', 'data': []}}
     sensor = init_sensor()
     read_data(node_ids, 30)
