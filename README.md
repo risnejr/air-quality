@@ -2,7 +2,11 @@
 This repository consists of several modules that together serves as an air quality monitoring system.
 
 ## Flow between services
+<<<<<<< HEAD
 ![image](https://user-images.githubusercontent.com/16987380/43758634-0a058560-9a1d-11e8-8c8e-7110207c8e62.png)
+=======
+![image](https://user-images.githubusercontent.com/16987380/43726032-5ef469e4-999e-11e8-8fa6-f6cd60a8c34a.png)
+>>>>>>> 1abf97a0045027664fb615684272534601e3cabe
 
 ## The different modules
 All the instructions below assumes that you've cloned this repository and standing in the root folder of the project. Certificates are also needed to establish a connection to both **Enlight Hierarchy** and **IoT**.
@@ -10,20 +14,31 @@ All the instructions below assumes that you've cloned this repository and standi
 ```
 .
 ├── aq_level
+<<<<<<< HEAD
 ├── certs               <----
+=======
+├── certs               <---- 
+>>>>>>> 1abf97a0045027664fb615684272534601e3cabe
 │   ├── hierarchy
 │   │   ├── ca.crt
 │   │   ├── client.crt
 │   │   └── client.key
 │   └── iot
+<<<<<<< HEAD
 │       ├── ca.crt
 │       ├── client.crt
 │       └── client.key
+=======
+│   │   ├── ca.crt
+│   │   ├── client.crt
+│   │   └── client.key
+>>>>>>> 1abf97a0045027664fb615684272534601e3cabe
 ├── config
 ├── dashboard
 ├── read_sensor
 └── vote
 ```
+<<<<<<< HEAD
 ### `aq-level`
 The air quality level module predicts the air quality into three different different categories which are either `Good`, `Ok` or `Bad`. This is done by listening to the **gRPC** stream from **Enlight IoT** and letting a *Deep Neural Network* (DNN) making a prediction every time all of the desired inspection points (values the **BME680** sensor reads) are updated.
 
@@ -66,3 +81,18 @@ Vote module consists of a client which is setup to send HTTP POST requests to an
 $ cd vote
 $ yarn deploy
 ```
+=======
+### Air quality level (aq_level)
+TODO
+### Generate config file (config)
+TODO
+### Dashboard (dashboard)
+TODO
+### Read sensor (read_sensor)
+This module is meant to be running on a **RPi Zero W** with a **BME680** sensor attatched. The script also supports backfilling data if the device loses internet connection.
+
+TODO
+### Vote (vote)
+TODO
+
+>>>>>>> 1abf97a0045027664fb615684272534601e3cabe
