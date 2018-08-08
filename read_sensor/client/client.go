@@ -18,7 +18,6 @@ func dialGRPC() iot.IoTClient {
 	CLIENTKEY := "../certs/iot/client.key"
 	CACRT := "../certs/iot/ca.crt"
 
-	log.Info("CreateClient")
 	client := iot.CreateClient()
 	transportOption, err := grpc.WithTransportCredentials(
 		HOST, CLIENTCRT, CLIENTKEY, CACRT,
@@ -49,7 +48,6 @@ func dialGRPC() iot.IoTClient {
 		return nil
 	}
 
-	log.Info("DeepPing")
 	if err = client.DeepPing(); err != nil {
 		log.WithError(err).Error("client.DeepPing")
 		return nil
@@ -89,9 +87,10 @@ func main() {
 			YUnit:      unit,
 		},
 	}
+	nodeDataInput := api.IngestNodeDataInput{NodeId: id, NodeData: &nodeData}
 
-	log.WithField("nodeData", nodeData).Info("IngestNodeData")
-	err := client.IngestNodeData(id, nodeData)
+	log.Info("IngestNodeData")
+	err := client.IngestNodeData(nodeDataInput)
 	if err != nil {
 		log.
 			WithError(err).

@@ -57,8 +57,8 @@ def backfill_data():
 
     backfill = {node_ids['temperature']: {'unit': 'C', 'data': []},
                 node_ids['pressure']: {'unit': 'hPa', 'data': []},
-                node_ids['humidity']: {'unit': 'hPa', 'data': []},
-                node_ids['gas']: {'unit': 'hPa', 'data': []}}
+                node_ids['humidity']: {'unit': '%', 'data': []},
+                node_ids['gas']: {'unit': 'Ohm', 'data': []}}
 
 
 def read_data(node_ids, sampling_interval):
@@ -94,7 +94,7 @@ if __name__ == '__main__':
     recover = False
     backfill = {node_ids['temperature']: {'unit': 'C', 'data': []},
                 node_ids['pressure']: {'unit': 'hPa', 'data': []},
-                node_ids['humidity']: {'unit': 'hPa', 'data': []},
-                node_ids['gas']: {'unit': 'hPa', 'data': []}}
+                node_ids['humidity']: {'unit': '%', 'data': []},
+                node_ids['gas']: {'unit': 'Ohm', 'data': []}}
     sensor = init_sensor()
     read_data(node_ids, 30)
