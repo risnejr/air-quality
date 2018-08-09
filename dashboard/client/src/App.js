@@ -46,30 +46,30 @@ class App extends Component {
   }
 
   componentDidMount() {
-    let source = new EventSource("http://localhost:5000/grpc/" + this.funcLoc + "/" + this.asset)
+    let source = new EventSource("http://localhost:5000?func_loc=" + this.funcLoc + "&asset=" + this.asset)
     let data = {}
 
-    source.addEventListener('delta', e => {
+    source.onmessage = e => {
       data = JSON.parse(e.data)
-      if (data.inspection_point === 'temperature') {
+      if (data.point_name === 'temperature') {
         this.setState({temp: data.node_data.toFixed(2)})
       }
-      else if (data.inspection_point === 'pressure') {
+      else if (data.point_name === 'pressure') {
         this.setState({pres: data.node_data.toFixed(2)})
       }
-      else if (data.inspection_point === 'humidity') {
+      else if (data.point_name === 'humidity') {
         this.setState({hum: data.node_data.toFixed(2)})
       }
-      else if (data.inspection_point === 'gas') {
+      else if (data.point_name === 'gas') {
         this.setState({gas: (data.node_data/1000).toFixed(2)})
       }
-      else if (data.inspection_point === 'air_quality') {
+      else if (data.point_name === 'air_quality') {
         this.setState({pred: data.node_data})
       }
-      else if (data.inspection_point === 'vote') {
+      else if (data.point_name === 'vote') {
         this.setState({vote: data.node_data})
       }
-    })
+    }
   }
 
   render() {

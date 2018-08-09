@@ -19,3 +19,10 @@ config.json
 
 # python related ignores
 **/__pycache__
+
+# bin
+**/vote
+**/sse
+
+# keras models
+*.h5
