@@ -86,19 +86,20 @@ func handleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 		fmt.Println("error:", err)
 	}
 
-	nodeID := gjson.Get(jsonString, body.FuncLoc+"."+body.Asset+".vote").String()
+	id := gjson.Get(jsonString, body.FuncLoc+"."+body.Asset+".vote").String()
 	nodeData := api.NodeData{
 		CreatedAt:       time.Now().Unix() * 1000,
 		ContentType:     api.NodeDataContentType_QUESTION_ANSWERS,
 		QuestionAnswers: body.Answer,
 	}
 
+	nodeDataInput := api.IngestNodeDataInput{NodeId: id, NodeData: &nodeData}
 	log.Info("Ingest Data")
-	err = client.IngestNodeData(nodeID, nodeData)
+	err = client.IngestNodeData(nodeDataInput)
 	if err != nil {
 		log.
 			WithError(err).
-			WithField("nodeID", nodeID).
+			WithField("nodeID", id).
 			WithField("nodeData", nodeData).
 			Error("client.IngestNodeData")
 	}
