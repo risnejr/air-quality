@@ -1,3 +1,5 @@
+from threading import Thread
+
 import bme680
 import time
 import os
@@ -48,12 +50,14 @@ def buffer_data(t):
         backfill[node_ids['gas']]['data'].append((t, sensor.data.gas_resistance))
 
 
-def backfill_data():
-    global backfill
-
+def backfill_data(backfill):
     for node_id in backfill.keys():
         for t, value in backfill[node_id]['data']:
             ingest_node(t, value, backfill[node_id]['unit'], node_id)
+
+
+def reset_backfill():
+    global backfill
 
     backfill = {node_ids['temperature']: {'unit': 'C', 'data': []},
                 node_ids['pressure']: {'unit': 'hPa', 'data': []},
@@ -70,7 +74,8 @@ def read_data(node_ids, sampling_interval):
             if not internet():
                 buffer_data(t)
             elif recover:
-                backfill_data()
+                Thread(target=backfill_data, args=(backfill,))
+                reset_backfill()
                 recover = False
             else:
                 try:
@@ -92,9 +97,6 @@ if __name__ == '__main__':
         node_ids = json.load(f)[func_loc][asset]
 
     recover = False
-    backfill = {node_ids['temperature']: {'unit': 'C', 'data': []},
-                node_ids['pressure']: {'unit': 'hPa', 'data': []},
-                node_ids['humidity']: {'unit': '%', 'data': []},
-                node_ids['gas']: {'unit': 'Ohm', 'data': []}}
+    reset_backfill()
     sensor = init_sensor()
     read_data(node_ids, 30)
