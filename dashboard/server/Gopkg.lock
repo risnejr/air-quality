@@ -2,12 +2,14 @@
 
 
 [[projects]]
-  digest = "1:54608a93efc3e8cdb43ee66fb1e0dddb5e867466b79306f30dee6890ab95ded7"
+  digest = "1:54d9a9d04bb3ccdac98c62ef362a5284de4374fd81fde82214e0d97d2e986f84"
   name = "github.com/SKF/go-enlight-sdk"
   packages = [
     "grpc",
     "services/iot",
     "services/iot/iotgrpcapi",
+    "services/pas",
+    "services/pas/pasapi",
   ]
   pruneopts = "UT"
   revision = "3727895f8db7de072264c42b9e0c2c0959f72117"
@@ -167,6 +169,8 @@
     "github.com/SKF/go-enlight-sdk/grpc",
     "github.com/SKF/go-enlight-sdk/services/iot",
     "github.com/SKF/go-enlight-sdk/services/iot/iotgrpcapi",
+    "github.com/SKF/go-enlight-sdk/services/pas",
+    "github.com/SKF/go-enlight-sdk/services/pas/pasapi",
     "github.com/SKF/go-utility/log",
   ]
   solver-name = "gps-cdcl"
