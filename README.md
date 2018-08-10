@@ -15,6 +15,10 @@ All the instructions below assumes that you've cloned this repository and standi
 │   │   ├── ca.crt
 │   │   ├── client.crt
 │   │   └── client.key
+│   ├── pas
+│   │   ├── ca.crt
+│   │   ├── client.crt
+│   │   └── client.key
 │   └── iot
 │       ├── ca.crt
 │       ├── client.crt
@@ -37,16 +41,16 @@ $ cd aq-level
 $ python3 -m unittest discover -v
 ```
 ### `config`
-Config is meant to generate the required `config.json` file which is required by all of the other modules (see "flowchart" above).
+This is meant to generate the required `config.json` file which is required by all of the other modules (see "flowchart" above).
 ```
 $ cd config
 $ python3 config.py --id <node_id from functional location>
 ```
 ### `dashboard`
-The dashboard consists of a flask server in the backend which reads the **gRPC** stream connected to **Enlight IoT**. It filters down and send *server-sent events* (sse) based on the given functional location and asset. The client side is built upon react which gets this data from the flask app using an EventSource.
+The dashboard's backend reads the **gRPC** stream connected to **Enlight IoT**. It filters down and send *server-sent events* (sse) based on the given functional location and asset. The client side is built with react which gets this data from the go server using an EventSource.
 ```
 $ cd dashboard/server
-$ export FLASK_APP=server.py && flask run &
+$ go run sse.go &
 ```
 ```
 $ cd dashboard/client
