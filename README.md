@@ -46,7 +46,7 @@ $ python3 config.py --id <node_id from functional location>
 The dashboard consists of a flask server in the backend which reads the **gRPC** stream connected to **Enlight IoT**. It filters down and send *server-sent events* (sse) based on the given functional location and asset. The client side is built upon react which gets this data from the flask app using an EventSource.
 ```
 $ cd dashboard/server
-$ export FLASK_APP=server.py && flask run &
+$ go run sse.go &
 ```
 ```
 $ cd dashboard/client
