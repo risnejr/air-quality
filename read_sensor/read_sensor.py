@@ -5,6 +5,7 @@ import time
 import os
 import socket
 import json
+import os.path
 
 
 def internet(host='8.8.8.8', port=53, timeout=3):
@@ -37,8 +38,10 @@ def init_sensor():
 
 
 def ingest_node(t, data, unit, node_id):
-    cmd = ('./client/client --time={} --data={} --unit={} --id={}'
-           .format(t, data, unit, node_id))
+    global my_path
+    cmd = os.path.join(my_path,
+                       ('./client/client --time={} --data={} --unit={} --id={}'
+                       .format(t, data, unit, node_id)))
     os.popen(cmd).read()
 
 
@@ -92,8 +95,10 @@ def read_data(node_ids, sampling_interval):
 
 if __name__ == '__main__':
     func_loc, asset = socket.gethostname().split('-')
+    my_path = os.path.abspath(os.path.dirname(__file__))
+    path = os.path.join(my_path, "../config.json")
 
-    with open('../config.json', 'r') as f:
+    with open(path, 'r') as f:
         node_ids = json.load(f)[func_loc][asset]
 
     recover = False

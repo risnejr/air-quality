@@ -2,6 +2,8 @@ package main
 
 import (
 	"flag"
+	"path"
+	"runtime"
 
 	"github.com/SKF/go-enlight-sdk/grpc"
 	"github.com/SKF/go-enlight-sdk/services/iot"
@@ -14,9 +16,10 @@ func dialGRPC() iot.IoTClient {
 	HOST := "grpc.sandbox.iot.enlight.skf.com"
 	PORT := "50051"
 
-	CLIENTCRT := "../certs/iot/client.crt"
-	CLIENTKEY := "../certs/iot/client.key"
-	CACRT := "../certs/iot/ca.crt"
+	_, filename, _, _ := runtime.Caller(0)
+	CLIENTCRT := path.Join(filename, "../../certs/iot/client.crt")
+	CLIENTKEY := path.Join(filename, "../../certs/iot/client.key")
+	CACRT := path.Join(filename, "../../certs/iot/ca.crt")
 
 	client := iot.CreateClient()
 	transportOption, err := grpc.WithTransportCredentials(
