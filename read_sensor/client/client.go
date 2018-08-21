@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"path"
 	"runtime"
 
@@ -21,7 +20,6 @@ func dialGRPC() iot.IoTClient {
 	CLIENTCRT := path.Join(filename, "../../certs/iot/client.crt")
 	CLIENTKEY := path.Join(filename, "../../certs/iot/client.key")
 	CACRT := path.Join(filename, "../../certs/iot/ca.crt")
-	fmt.Println(filename)
 
 	client := iot.CreateClient()
 	transportOption, err := grpc.WithTransportCredentials(
