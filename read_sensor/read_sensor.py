@@ -41,9 +41,9 @@ def ingest_node(t, data, unit, node_id):
     global my_path
 
     cmd = os.path.join(my_path,
-                       ('client/client --time={} --data={} --unit={} --id={}'
+                       ('client/client --time={} --data={} --unit={} --id={} &'
                        .format(t, data, unit, node_id)))
-    os.popen(cmd).read()
+    os.system(cmd)
 
 
 def buffer_data(t):
