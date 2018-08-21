@@ -78,7 +78,7 @@ def read_data(node_ids, sampling_interval):
             if not internet():
                 buffer_data(t)
             elif recover:
-                Thread(target=backfill_data, args=(backfill,))
+                Thread(target=backfill_data, args=(backfill,)).start()
                 reset_backfill()
                 recover = False
             else:
