@@ -23,7 +23,7 @@ All the instructions below assumes that you've cloned this repository and standi
 │       ├── ca.crt
 │       ├── client.crt
 │       └── client.key
-├── config
+├── gen_config
 ├── dashboard
 ├── read_sensor
 └── vote
@@ -33,17 +33,17 @@ The air quality level module predicts the air quality into three different diffe
 
 The DNN is trained by manual labels which is a continuous process and these labels are fetched from the `vote` module.
 ```
-$ cd aq-level
+$ cd aq_level
 $ python3 main.py &
 ```
 ```
-$ cd aq-level
+$ cd aq_level
 $ python3 -m unittest discover -v
 ```
-### `config`
+### `gen_config`
 This is meant to generate the required `config.json` file which is required by all of the other modules (see "flowchart" above).
 ```
-$ cd config
+$ cd gen_config
 $ python3 config.py --id <node_id from functional location>
 ```
 ### `dashboard`
