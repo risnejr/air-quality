@@ -4,10 +4,7 @@ dashboard:
 	cd dashboard/client && yarn start &
 	cd dashboard/server && ./sse &
 
-read_sensor:
-	cd read_sensor && python3 read_sensor.py &
-
-gen_config:
+config:
 	cd gen_config && python3 gen_config.py --id 9eed7c12-e97a-47ff-bac7-d38eef1f0c4c
 
 aq_level:
