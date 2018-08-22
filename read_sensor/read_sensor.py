@@ -97,9 +97,9 @@ def read_data(node_ids, sampling_interval):
 if __name__ == '__main__':
     func_loc, asset = socket.gethostname().split('-')
     my_path = os.path.abspath(os.path.dirname(__file__))
-    path = os.path.join(my_path, "../config.json")
+    config_file = os.path.join(my_path, "../config.json")
 
-    with open(path, 'r') as f:
+    with open(config_file, 'r') as f:
         node_ids = json.load(f)[func_loc][asset]
 
     recover = False
