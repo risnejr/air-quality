@@ -98,7 +98,6 @@ func main() {
 	}
 	nodeDataInput := api.IngestNodeDataInput{NodeId: id, NodeData: &nodeData}
 
-	log.Info("IngestNodeData")
 	err := client.IngestNodeData(nodeDataInput)
 	if err != nil {
 		log.
