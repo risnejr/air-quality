@@ -186,8 +186,7 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 		}
 		pointAlarmStatus := latestAlarm
 
-		fmt.Println(pointData, pointName, pointAlarmStatus)
-
+		// fmt.Println(pointData, pointName, pointAlarmStatus)
 		jsonData := map[string]interface{}{"node_data": pointData, "point_name": pointName, "alarm_status": pointAlarmStatus}
 		sseData, _ := json.Marshal(jsonData)
 		fmt.Fprintf(w, "data: %s\n\n", string(sseData))
@@ -199,10 +198,14 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 	stream := make(chan iotapi.GetNodeDataStreamOutput)
 
 	go func() {
-		err := iotClient.GetNodeDataStream(input, stream)
-		if err != nil {
-			log.Error(err)
-			// TODO Add reconnection here
+		for {
+			err = iotClient.GetNodeDataStream(input, stream)
+			if err != nil {
+				log.Error(err)
+				// TODO Add reconnection here
+				iotClient = DialIoT()
+			}
+			fmt.Println("test")
 		}
 	}()
 
@@ -220,9 +223,11 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					log.Error(err)
 					// TODO Add reconnection here
+					pasClient = DialPAS()
 				}
 				pointAlarmStatus := latestAlarm
 
+				// fmt.Println(pointData, pointName, pointAlarmStatus)
 				jsonData := map[string]interface{}{"node_data": pointData, "point_name": pointName, "alarm_status": pointAlarmStatus}
 				sseData, _ := json.Marshal(jsonData)
 				fmt.Fprintf(w, "data: %s\n\n", string(sseData))
