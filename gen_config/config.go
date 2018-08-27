@@ -90,6 +90,9 @@ func GenerateConfigFromParentID(config Config, funcLoc string, asset string, par
 		} else if childNode.Type == "asset" {
 			asset = replacer.Replace(strings.ToLower(childNode.Label))
 			config[funcLoc][asset] = make(map[string]string)
+			config[funcLoc][asset]["__location_id__"] = parentID
+			config[funcLoc][asset]["__asset_id__"] = childNode.Id
+
 		} else {
 			point := replacer.Replace(strings.ToLower(childNode.Label))
 			config[funcLoc][asset][point] = childNode.Id
