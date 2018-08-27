@@ -205,7 +205,6 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 				// TODO Add reconnection here
 				iotClient = DialIoT()
 			}
-			fmt.Println("test")
 		}
 	}()
 
