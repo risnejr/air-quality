@@ -16,14 +16,6 @@
   version = "20180808"
 
 [[projects]]
-  digest = "1:994b5e581e63f5f9df2b4dc99b24141c4d155e08a73b4b36aebc9b5e6c53aa4c"
-  name = "github.com/SKF/go-utility"
-  packages = ["log"]
-  pruneopts = "UT"
-  revision = "392196726f0ecda99d1bc18617e300080e34b454"
-  version = "20180802"
-
-[[projects]]
   digest = "1:17fe264ee908afc795734e8c4e63db2accabaf57326dbf21763a7d6b86096260"
   name = "github.com/golang/protobuf"
   packages = [
@@ -36,38 +28,6 @@
   pruneopts = "UT"
   revision = "b4deda0973fb4c70b50d226b1af49f3da59f5265"
   version = "v1.1.0"
-
-[[projects]]
-  branch = "master"
-  digest = "1:1b38c2fb861ca02b8da61a0c9b6e3a1436f41bc308bd258cabd0a928f0d45d0c"
-  name = "github.com/johntdyer/slack-go"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "95fac1160b220c5abcf8b0ef88e9c3cb213c09f4"
-
-[[projects]]
-  branch = "master"
-  digest = "1:5b4a3e8bbb53bd61db449b651e8aca7bf0e9cac2248b4a7871d37b0e5efb2d4d"
-  name = "github.com/johntdyer/slackrus"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "f7aae3243a0786c5a974bce71ed951c459876e64"
-
-[[projects]]
-  digest = "1:d867dfa6751c8d7a435821ad3b736310c2ed68945d05b50fb9d23aee0540c8cc"
-  name = "github.com/sirupsen/logrus"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "3e01752db0189b9157070a0e1668a620f9a85da2"
-  version = "v1.0.6"
-
-[[projects]]
-  branch = "master"
-  digest = "1:3f3a05ae0b95893d90b9b3b5afdb79a9b3d96e4e36e099d841ae602e4aca0da8"
-  name = "golang.org/x/crypto"
-  packages = ["ssh/terminal"]
-  pruneopts = "UT"
-  revision = "f027049dab0ad238e394a753dba2d14753473a04"
 
 [[projects]]
   branch = "master"
@@ -87,12 +47,9 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:2455630696ece2771aab91b25300a375df10b948d43d1b565feda5d89afd2bde"
+  digest = "1:4d7a8265af700258feaff86722049eb5b787240d66dfaf45ff4962f09de6e0be"
   name = "golang.org/x/sys"
-  packages = [
-    "unix",
-    "windows",
-  ]
+  packages = ["unix"]
   pruneopts = "UT"
   revision = "acbc56fc7007d2a01796d5bde54f39e3b3e95945"
 
@@ -171,7 +128,6 @@
     "github.com/SKF/go-enlight-sdk/services/iot/iotgrpcapi",
     "github.com/SKF/go-enlight-sdk/services/pas",
     "github.com/SKF/go-enlight-sdk/services/pas/pasapi",
-    "github.com/SKF/go-utility/log",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

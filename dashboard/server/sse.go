@@ -10,12 +10,12 @@ import (
 	"syscall"
 
 	"github.com/SKF/go-enlight-sdk/services/pas"
+	"github.com/SKF/go-utility/log"
 
 	"github.com/SKF/go-enlight-sdk/grpc"
 	"github.com/SKF/go-enlight-sdk/services/iot"
 	iotapi "github.com/SKF/go-enlight-sdk/services/iot/iotgrpcapi"
 	"github.com/SKF/go-enlight-sdk/services/pas/pasapi"
-	"github.com/SKF/go-utility/log"
 )
 
 // Config map[functional_location_name]map[asset_name]map[point_name]point_id
@@ -141,7 +141,7 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 	}
 	var config Config
 	json.Unmarshal(jsonConfig, &config)
-	nodeIds := config[funcLoc][asset]
+	nodeIDs := config[funcLoc][asset]
 
 	// Dial and defer connection with gRPC server
 	iotClient := DialIoT()
@@ -159,38 +159,33 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 		os.Exit(1)
 	}()
 
-	var pointData interface{}
+	id := 0
+
+	var pointData float64
 	// GetLatestNodeData from every nodeID and send them over SSE
-	for pointName, pointId := range nodeIds {
-		if pointName != "vote" && pointName != "air_quality" {
-			latestInput := iotapi.GetLatestNodeDataInput{NodeId: pointId, ContentType: 1}
+	for pointName, pointID := range nodeIDs {
+		// Make sure to ignore IDs which begin and ends with "__"
+		if string(pointName[:2]) != "__" && string(pointName[len(pointName)-2:]) != "__" {
+			latestInput := iotapi.GetLatestNodeDataInput{NodeId: pointID, ContentType: 1}
 			latestOutput, err := iotClient.GetLatestNodeData(latestInput)
 			if err != nil {
 				log.Error(err)
-				// s, ok := status.FromError(err)
-				// fmt.Println(s, ok)
 			}
 			pointData = latestOutput.DataPoint.Coordinate.Y
-		} else {
-			latestInput := iotapi.GetLatestNodeDataInput{NodeId: pointId, ContentType: 6}
-			latestOutput, err := iotClient.GetLatestNodeData(latestInput)
+
+			latestAlarmInput := pasapi.GetPointAlarmStatusInput{NodeId: pointID}
+			latestAlarm, err := pasClient.GetPointAlarmStatus(latestAlarmInput)
 			if err != nil {
 				log.Error(err)
 			}
-			pointData = latestOutput.QuestionAnswers
-		}
-		latestAlarmInput := pasapi.GetPointAlarmStatusInput{NodeId: pointId}
-		latestAlarm, err := pasClient.GetPointAlarmStatus(latestAlarmInput)
-		if err != nil {
+			pointAlarmStatus := latestAlarm
 
+			jsonData := map[string]interface{}{"node_data": pointData, "point_name": pointName, "alarm_status": pointAlarmStatus}
+			sseData, _ := json.Marshal(jsonData)
+			fmt.Fprintf(w, "id: %v\ndata: %s\n\n", id, string(sseData))
+			flusher.Flush()
+			id++
 		}
-		pointAlarmStatus := latestAlarm
-
-		// fmt.Println(pointData, pointName, pointAlarmStatus)
-		jsonData := map[string]interface{}{"node_data": pointData, "point_name": pointName, "alarm_status": pointAlarmStatus}
-		sseData, _ := json.Marshal(jsonData)
-		fmt.Fprintf(w, "data: %s\n\n", string(sseData))
-		flusher.Flush()
 	}
 
 	// Setup in and outputs of GetNodeDataStream
@@ -203,6 +198,7 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				log.Error(err)
 				// TODO Add reconnection here
+				// s, _ := status.FromError(err)
 				iotClient = DialIoT()
 			}
 		}
@@ -210,33 +206,31 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 
 	// Listen to stream and filter on correct IDs and send data over SSE
 	for data := range stream {
-		for pointName, pointId := range nodeIds {
-			if data.NodeId == pointId {
-				if pointName != "vote" && pointName != "air_quality" {
-					pointData = data.NodeData.DataPoint.Coordinate.Y
-				} else {
-					pointData = data.NodeData.QuestionAnswers
-				}
-				latestAlarmInput := pasapi.GetPointAlarmStatusInput{NodeId: pointId}
+		for pointName, pointID := range nodeIDs {
+			if data.NodeId == pointID {
+				pointData = data.NodeData.DataPoint.Coordinate.Y
+				latestAlarmInput := pasapi.GetPointAlarmStatusInput{NodeId: pointID}
 				latestAlarm, err := pasClient.GetPointAlarmStatus(latestAlarmInput)
 				if err != nil {
 					log.Error(err)
 					// TODO Add reconnection here
+					// s, _ := status.FromError(err)
 					pasClient = DialPAS()
 				}
 				pointAlarmStatus := latestAlarm
 
-				// fmt.Println(pointData, pointName, pointAlarmStatus)
 				jsonData := map[string]interface{}{"node_data": pointData, "point_name": pointName, "alarm_status": pointAlarmStatus}
 				sseData, _ := json.Marshal(jsonData)
-				fmt.Fprintf(w, "data: %s\n\n", string(sseData))
+				fmt.Fprintf(w, "id: %v\ndata: %s\n\n", id, string(sseData))
 				flusher.Flush()
+				id++
 			}
 		}
 	}
 }
 
 func main() {
+	fmt.Println("Server is now running on port 5000...")
 	http.HandleFunc("/", Stream)
 	if err := http.ListenAndServe(":5000", nil); err != nil {
 		log.Error(err)
