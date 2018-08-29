@@ -20,10 +20,6 @@
   transform: translate(-50%, -50%);
 }
 
-.trend {
-  float: right !important;
-}
-
 .progress {
   position: relative;
   float: left;
