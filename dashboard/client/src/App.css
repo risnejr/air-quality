@@ -2,8 +2,8 @@
   width: 100vw;
   height: 94vh;
   display: grid;
+  grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 
 .card {
@@ -12,20 +12,16 @@
   margin: 25px;
 }
 
-.bottom {
-  grid-column: 1 / 3;
-}
-
-.recent {
-  grid-column: 3 / 5;
-}
-
 .value {
   position: relative;
   float: left;
   top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.trend {
+  float: right !important;
 }
 
 .progress {

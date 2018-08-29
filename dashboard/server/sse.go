@@ -11,6 +11,7 @@ import (
 
 	"github.com/SKF/go-enlight-sdk/services/pas"
 	"github.com/SKF/go-utility/log"
+	"google.golang.org/grpc/status"
 
 	"github.com/SKF/go-enlight-sdk/grpc"
 	"github.com/SKF/go-enlight-sdk/services/iot"
@@ -117,6 +118,14 @@ func DialPAS() pas.PointAlarmStatusClient {
 
 // Stream is a handler that sends SSE packages
 func Stream(w http.ResponseWriter, r *http.Request) {
+	// Get functional location and asset from url parameters
+	query := r.URL.Query()
+	funcLoc := query["func_loc"][0]
+	asset := query["asset"][0]
+
+	fmt.Printf("%v request from %v ", r.Method, r.Header.Get("origin"))
+	fmt.Printf("is now streaming values from:\n\t* Functional location: %v\n\t* Asset: %v\n\n", funcLoc, asset)
+
 	// Make sure that streaming is supported
 	flusher, ok := w.(http.Flusher)
 	if !ok {
@@ -128,11 +137,6 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-
-	// Get functional location and asset from url parameters
-	query := r.URL.Query()
-	funcLoc := query["func_loc"][0]
-	asset := query["asset"][0]
 
 	// Read config file and extract corresponding node ids
 	jsonConfig, err := ioutil.ReadFile("../../config.json")
@@ -197,9 +201,11 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 			err = iotClient.GetNodeDataStream(input, stream)
 			if err != nil {
 				log.Error(err)
-				// TODO Add reconnection here
-				// s, _ := status.FromError(err)
-				iotClient = DialIoT()
+				st, _ := status.FromError(err)
+				// Retry if status code is Unavailable (14)
+				if st.Code() == 14 {
+					iotClient = DialIoT()
+				}
 			}
 		}
 	}()
@@ -213,9 +219,11 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 				latestAlarm, err := pasClient.GetPointAlarmStatus(latestAlarmInput)
 				if err != nil {
 					log.Error(err)
-					// TODO Add reconnection here
-					// s, _ := status.FromError(err)
-					pasClient = DialPAS()
+					st, _ := status.FromError(err)
+					// Retry if status code is Unavailable (14)
+					if st.Code() == 14 {
+						pasClient = DialPAS()
+					}
 				}
 				pointAlarmStatus := latestAlarm
 
@@ -230,7 +238,7 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	fmt.Println("Server is now running on port 5000...")
+	fmt.Print("Server is now running on port 5000...\n\n")
 	http.HandleFunc("/", Stream)
 	if err := http.ListenAndServe(":5000", nil); err != nil {
 		log.Error(err)
