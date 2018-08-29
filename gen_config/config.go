@@ -112,7 +112,7 @@ func main() {
 	config := make(Config)
 	config = GenerateConfigFromParentID(config, "", "", parentID)
 
-	jsonData, err := json.MarshalIndent(config, "", "  ")
+	jsonData, err := json.Marshal(config)
 	if err != nil {
 		log.Error(err)
 	}
