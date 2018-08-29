@@ -62,13 +62,18 @@ class App extends Component {
     }
   }
 
+  toTitleCase(name) {
+    name = name.split("_").join(" ")
+    return name.replace(/\w\S*/g, txt => {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();})
+  }
+
   render() {
     return (
       <div>
         <AppBar position="static" style={{ backgroundColor: '#185cd3' }}>
           <Toolbar>
-            <Typography variant="title" style={{ color: '#ffffff' }}>
-              <Emoji symbol='🏡'/> {String(this.funcLoc).split("_").join(" ").toUpperCase()} <Emoji symbol='👉'/> {String(this.asset).split("_").join(" ").toUpperCase()}
+            <Typography variant="title" style={{ color: '#ffffff', padding: 10 }}>
+              <Emoji symbol='🏡'/> {this.toTitleCase(this.funcLoc)} <br/> <Emoji symbol='📦'/> {this.toTitleCase(this.asset)}
             </Typography>
           </Toolbar>
         </AppBar>
