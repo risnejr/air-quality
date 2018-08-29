@@ -73,7 +73,7 @@ class App extends Component {
         <AppBar position="static" style={{ backgroundColor: '#185cd3' }}>
           <Toolbar>
             <Typography variant="title" style={{ color: '#ffffff', padding: 10 }}>
-              <Emoji symbol='🏡'/> {this.toTitleCase(this.funcLoc)} <br/> <Emoji symbol='📦'/> {this.toTitleCase(this.asset)}
+              <Emoji symbol='🏡'/> {this.toTitleCase(this.funcLoc)} <Emoji symbol='📦'/> {this.toTitleCase(this.asset)}
             </Typography>
           </Toolbar>
         </AppBar>
