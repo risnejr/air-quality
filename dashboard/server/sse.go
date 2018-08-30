@@ -153,6 +153,8 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 	defer iotClient.Close()
 	defer pasClient.Close()
 
+	// Create a channel who signals that the client is gone
+	clientGone := w.(http.CloseNotifier).CloseNotify()
 	// Make sure to close client if ctrl+c is invoked
 	c := make(chan os.Signal)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
@@ -186,6 +188,7 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 
 			jsonData := map[string]interface{}{"node_data": pointData, "point_name": pointName, "alarm_status": pointAlarmStatus}
 			sseData, _ := json.Marshal(jsonData)
+			fmt.Printf("id: %v\ndata: %s\n\n", id, string(sseData))
 			fmt.Fprintf(w, "id: %v\ndata: %s\n\n", id, string(sseData))
 			flusher.Flush()
 			id++
@@ -203,6 +206,7 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 				log.Error(err)
 				st, _ := status.FromError(err)
 				// Retry if status code is Unavailable (14)
+				// TODO add exponential backoff and retry
 				if st.Code() == 14 {
 					iotClient = DialIoT()
 				}
@@ -211,28 +215,37 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	// Listen to stream and filter on correct IDs and send data over SSE
-	for data := range stream {
-		for pointName, pointID := range nodeIDs {
-			if data.NodeId == pointID {
-				pointData = data.NodeData.DataPoint.Coordinate.Y
-				latestAlarmInput := pasapi.GetPointAlarmStatusInput{NodeId: pointID}
-				latestAlarm, err := pasClient.GetPointAlarmStatus(latestAlarmInput)
-				if err != nil {
-					log.Error(err)
-					st, _ := status.FromError(err)
-					// Retry if status code is Unavailable (14)
-					if st.Code() == 14 {
-						pasClient = DialPAS()
+	for {
+		select {
+		case data := <-stream:
+			for pointName, pointID := range nodeIDs {
+				if data.NodeId == pointID {
+					pointData = data.NodeData.DataPoint.Coordinate.Y
+					latestAlarmInput := pasapi.GetPointAlarmStatusInput{NodeId: pointID}
+					latestAlarm, err := pasClient.GetPointAlarmStatus(latestAlarmInput)
+					if err != nil {
+						log.Error(err)
+						st, _ := status.FromError(err)
+						// Retry if status code is Unavailable (14)
+						// TODO add exponential backoff and retry
+						if st.Code() == 14 {
+							pasClient = DialPAS()
+						}
 					}
-				}
-				pointAlarmStatus := latestAlarm
+					pointAlarmStatus := latestAlarm
 
-				jsonData := map[string]interface{}{"node_data": pointData, "point_name": pointName, "alarm_status": pointAlarmStatus}
-				sseData, _ := json.Marshal(jsonData)
-				fmt.Fprintf(w, "id: %v\ndata: %s\n\n", id, string(sseData))
-				flusher.Flush()
-				id++
+					jsonData := map[string]interface{}{"node_data": pointData, "point_name": pointName, "alarm_status": pointAlarmStatus}
+					sseData, _ := json.Marshal(jsonData)
+					fmt.Printf("id: %v\ndata: %s\n\n", id, string(sseData))
+					fmt.Fprintf(w, "id: %v\ndata: %s\n\n", id, string(sseData))
+					flusher.Flush()
+					id++
+
+				}
 			}
+		case <-clientGone:
+			fmt.Printf("Client %v disconnected from the feed...\n\n", r.RemoteAddr)
+			return
 		}
 	}
 }
