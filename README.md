@@ -5,9 +5,10 @@ This repository consists of several modules that together serves as an air quali
 Below is the prerequisites listed to use the different modules in this repository.
 
 ### Raspberry Pi sensor collection
-If your only plan is to set up a Raspberry Pi you''ll only need the following:
+If your only plan is to set up a Raspberry Pi (**RPi**) you'll only need the following:
 *   [PiBakery](http://www.pibakery.org/)
 *   `pibakery.xml` file from this repository
+
 ### Dashboard to visualize live data
 However if you plan on using the dashboard you'll need the following:
 *   [yarn](https://yarnpkg.com/en/)
@@ -26,9 +27,9 @@ Also, choosing hostname on the **RPi** must follow the naming convention `functi
 
 All the configuration is done within PiBakery. An example, setting the hostname requires you to modify the field *Set host name to `functional_location-asset`* inside PiBakery. The image below highlights the fields which needs to be manually configured.
 
-1.  Import the `pibakery.xml` file.
+1.  [Import](http://www.pibakery.org/docs/importexport.html) the `pibakery.xml` file.
 2.  Configure the highlighted sections to match your setup.
-3.  Write configuration to your SD-card (don't forget to insert it into your computer).
+3.  [Write](http://www.pibakery.org/docs/create.html) configuration to your SD-card (don't forget to insert it into your computer).
 
 ![image](https://user-images.githubusercontent.com/16987380/44849251-d1662800-ac59-11e8-9ceb-6b2c91f5ebd9.png)
 

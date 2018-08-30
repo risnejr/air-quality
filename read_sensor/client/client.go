@@ -105,6 +105,10 @@ func main() {
 			WithField("nodeID", id).
 			WithField("nodeData", nodeData).
 			Error("client.IngestNodeData")
+		return
 	}
-
+	log.
+		WithField("nodeID", id).
+		WithField("nodeData", nodeData).
+		Info("client.IngestNodeData")
 }
