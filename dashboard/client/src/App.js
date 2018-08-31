@@ -63,6 +63,7 @@ class App extends Component {
   }
 
   toTitleCase(name) {
+    if (name === null) return ""
     name = name.split("_").join(" ")
     return name.replace(/\w\S*/g, txt => {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();})
   }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -21,6 +22,8 @@ import (
 
 // Config map[functional_location_name]map[asset_name]map[point_name]point_id
 type Config map[string]map[string]map[string]string
+
+var verbose *bool
 
 // DialIoT returns an IoTClient client
 func DialIoT() iot.IoTClient {
@@ -170,29 +173,38 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 	var pointData float64
 	// GetLatestNodeData from every nodeID and send them over SSE
 	for pointName, pointID := range nodeIDs {
-		// Make sure to ignore IDs which begin and ends with "__"
-		if string(pointName[:2]) != "__" && string(pointName[len(pointName)-2:]) != "__" {
-			latestInput := iotapi.GetLatestNodeDataInput{NodeId: pointID, ContentType: 1}
-			latestOutput, err := iotClient.GetLatestNodeData(latestInput)
-			if err != nil {
-				log.Error(err)
-			}
-			pointData = latestOutput.DataPoint.Coordinate.Y
+		select {
+		case <-clientGone:
+			fmt.Printf("Client %v disconnected from the feed...\n\n", r.RemoteAddr)
+			return
+		default:
+			// Make sure to ignore IDs which begin and ends with "__"
+			if string(pointName[:2]) != "__" && string(pointName[len(pointName)-2:]) != "__" {
+				latestInput := iotapi.GetLatestNodeDataInput{NodeId: pointID, ContentType: 1}
+				latestOutput, err := iotClient.GetLatestNodeData(latestInput)
+				if err != nil {
+					log.Error(err)
+				}
+				pointData = latestOutput.DataPoint.Coordinate.Y
 
-			latestAlarmInput := pasapi.GetPointAlarmStatusInput{NodeId: pointID}
-			latestAlarm, err := pasClient.GetPointAlarmStatus(latestAlarmInput)
-			if err != nil {
-				log.Error(err)
-			}
-			pointAlarmStatus := latestAlarm
+				latestAlarmInput := pasapi.GetPointAlarmStatusInput{NodeId: pointID}
+				latestAlarm, err := pasClient.GetPointAlarmStatus(latestAlarmInput)
+				if err != nil {
+					log.Error(err)
+				}
+				pointAlarmStatus := latestAlarm
 
-			jsonData := map[string]interface{}{"node_data": pointData, "point_name": pointName, "alarm_status": pointAlarmStatus}
-			sseData, _ := json.Marshal(jsonData)
-			fmt.Printf("id: %v\ndata: %s\n\n", id, string(sseData))
-			fmt.Fprintf(w, "id: %v\ndata: %s\n\n", id, string(sseData))
-			flusher.Flush()
-			id++
+				jsonData := map[string]interface{}{"node_data": pointData, "point_name": pointName, "alarm_status": pointAlarmStatus}
+				sseData, _ := json.Marshal(jsonData)
+				if *verbose {
+					fmt.Printf("id: %v\ndata: %s\n\n", id, string(sseData))
+				}
+				fmt.Fprintf(w, "id: %v\ndata: %s\n\n", id, string(sseData))
+				flusher.Flush()
+				id++
+			}
 		}
+
 	}
 
 	// Setup in and outputs of GetNodeDataStream
@@ -201,14 +213,19 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 
 	go func() {
 		for {
-			err = iotClient.GetNodeDataStream(input, stream)
-			if err != nil {
-				log.Error(err)
-				st, _ := status.FromError(err)
-				// Retry if status code is Unavailable (14)
-				// TODO add exponential backoff and retry
-				if st.Code() == 14 {
-					iotClient = DialIoT()
+			select {
+			case <-clientGone:
+				return
+			default:
+				err = iotClient.GetNodeDataStream(input, stream)
+				if err != nil {
+					log.Error(err)
+					st, _ := status.FromError(err)
+					// Retry if status code is Unavailable (14)
+					// TODO add exponential backoff and retry
+					if st.Code() == 14 {
+						iotClient = DialIoT()
+					}
 				}
 			}
 		}
@@ -236,7 +253,9 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 
 					jsonData := map[string]interface{}{"node_data": pointData, "point_name": pointName, "alarm_status": pointAlarmStatus}
 					sseData, _ := json.Marshal(jsonData)
-					fmt.Printf("id: %v\ndata: %s\n\n", id, string(sseData))
+					if *verbose {
+						fmt.Printf("id: %v\ndata: %s\n\n", id, string(sseData))
+					}
 					fmt.Fprintf(w, "id: %v\ndata: %s\n\n", id, string(sseData))
 					flusher.Flush()
 					id++
@@ -251,6 +270,9 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	verbose = flag.Bool("v", false, "verbose")
+	flag.Parse()
+
 	fmt.Print("Server is now running on port 5000...\n\n")
 	http.HandleFunc("/", Stream)
 	if err := http.ListenAndServe(":5000", nil); err != nil {

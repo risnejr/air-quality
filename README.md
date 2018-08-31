@@ -2,7 +2,7 @@
 This repository consists of several modules that together serves as an air quality monitoring system.
 
 ## Prerequisites
-Below is the prerequisites listed to use the different modules in this repository.
+To use the different modules in this repository you're required to use the softwares listed below.
 
 ### Raspberry Pi sensor collection
 If your only plan is to set up a Raspberry Pi (**RPi**) you'll only need the following:
@@ -33,7 +33,7 @@ All the configuration is done within PiBakery. An example, setting the hostname 
 
 ![image](https://user-images.githubusercontent.com/16987380/44849251-d1662800-ac59-11e8-9ceb-6b2c91f5ebd9.png)
 
-Once the image is burnt, insert the micro SD card into your **RPi** and plug it into the power supply. Make sure that you're device is within range of chosen WiFi. If you aren't, the required packages such as git and pip won't be installed and nothing will happen. 
+Once the image is burnt, insert the micro SD card into your **RPi** and plug it into the power supply. Make sure that your device is within range of chosen WiFi. If you aren't, the required packages such as git and pip won't be installed and nothing will happen. 
 
 Depending on your internet connection the first and every other boot will vary in time. However, first boot is time consuming and it's not weird if it takes 15 minutes from plugging your device into the power outlet until you can see your data in **Analyze**.
 
@@ -81,9 +81,11 @@ Generates an **Enlight hierarchy** based on the **RPi's** hostname. The generate
 ### `dashboard`
 The dashboard's backend reads the **gRPC** stream connected to **Enlight IoT**. It filters down and send *server-sent events* (sse) based on the given functional location and asset. The client side is built with react which gets this data from the go server using an EventSource.
 
-Viewing live data from a specific asset requires you to enter the URL parameters `func_loc` and `asset` while using the client. These parameters reflect the hierarchies functional location and asset i.e. the hostname given to your device. Below is an image depicting the hierarchy view inside Enlight. To see these inspection points in your browser you need to append `?func_loc=install_team&asset=desk` to your client side URL i.e. if your using it locally the entire URL would be `localhost:3000/?func_loc=install_team&asset=desk`.
+Viewing live data from a specific asset requires you to enter the URL parameters `func_loc` and `asset` while using the client. These parameters reflect the hierarchies functional location and asset i.e. the hostname given to your device. Below is an image depicting the hierarchy view inside Enlight. 
 
 ![image](https://user-images.githubusercontent.com/16987380/44843289-4466a300-ac48-11e8-83e7-e1f7e56ff608.png)
+
+To visualize these inspection points in your browser you need to append `?func_loc=install_team&asset=desk` to your client side URL i.e. if your using it locally the entire URL would be `localhost:3000/?func_loc=install_team&asset=desk`.
 
 #### Update your configuration file (requires go and dep)
 Make sure to change directory to `air-quality/gen_config` and run the following
@@ -107,7 +109,7 @@ $ go build -o sse
 $ ./sse
 ```
 ### `gen_config`
-This is meant to generate the required `config.json` file which is required by all of the other modules (see "flowchart" above).
+Generates the required `config.json` file which is required by all of the other modules (see "flowchart" above).
 
 ### `read_sensor`
 This module is meant to be running on a **RPi Zero W** with a **BME680** sensor attached. The script also supports backfilling data if the device loses internet connection.
