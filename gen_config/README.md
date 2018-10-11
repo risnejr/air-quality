@@ -1,2 +1,0 @@
-# Config
-Generates the required file `config.json` for all the services related to this repository. The binary included is meant for armv6 architectures. To generate a binary for your architecture simply run `$ go build -o config`.
