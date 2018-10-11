@@ -39,14 +39,14 @@ Depending on your internet connection the first and every other boot will vary i
 
 ## Flow between services
 
-![image](https://user-images.githubusercontent.com/16987380/44774916-a8b83280-ab74-11e8-93f0-cfcbc296805d.png)
+![image](https://user-images.githubusercontent.com/16987380/46795720-2d3cca00-cd4b-11e8-938c-39dd9b37f1d1.png)
+
 
 ## The different modules
 Remember, certificates are needed to establish a connection to **Enlight Hierarchy**, **IoT** and **PAS**.
 
 ```
 .
-├── build_hierarchy
 ├── certs               <----
 │   ├── hierarchy
 │   │   ├── ca.crt
@@ -60,6 +60,7 @@ Remember, certificates are needed to establish a connection to **Enlight Hierarc
 │       ├── ca.crt
 │       ├── client.crt
 │       └── client.key
+├── build_hierarchy
 ├── gen_config
 └── read_sensor
 ```
