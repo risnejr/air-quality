@@ -105,4 +105,4 @@ if __name__ == '__main__':
     recover = False
     reset_backfill()
     sensor = init_sensor()
-    read_data(node_ids, 30)
+    read_data(node_ids, 1)
