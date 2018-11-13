@@ -6,6 +6,7 @@ import os
 import socket
 import json
 import os.path
+import subprocess
 
 
 def internet(host='8.8.8.8', port=53, timeout=3):
@@ -43,7 +44,7 @@ def ingest_node(t, data, unit, node_id):
     cmd = os.path.join(my_path,
                        ('client/client --time={} --data={} --unit={} --id={} &'
                        .format(t, data, unit, node_id)))
-    os.system(cmd)
+    subprocess.call(cmd)
 
 
 def buffer_data(t):
@@ -105,4 +106,4 @@ if __name__ == '__main__':
     recover = False
     reset_backfill()
     sensor = init_sensor()
-    read_data(node_ids, 5)
+    read_data(node_ids, 1)
