@@ -1,0 +1,10 @@
+package: github.com/risnejr/air-quality/read_sensor/client
+import:
+- package: github.com/SKF/go-enlight-sdk
+  subpackages:
+  - grpc
+  - services/iot
+  - services/iot/iotgrpcapi
+- package: github.com/SKF/go-utility
+  subpackages:
+  - log

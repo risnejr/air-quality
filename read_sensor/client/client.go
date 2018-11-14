@@ -10,11 +10,11 @@ import (
 	"github.com/SKF/go-enlight-sdk/services/iot"
 	"github.com/SKF/go-utility/log"
 
-	api "github.com/SKF/go-enlight-sdk/services/iot/iotgrpcapi"
+	api "github.com/SKF/proto/iot"
 )
 
 func dialGRPC() iot.IoTClient {
-	HOST := "grpc.sandbox.iot.enlight.skf.com"
+	HOST := "grpc.iot.enlight.skf.com"
 	PORT := "50051"
 
 	ex, err := os.Executable()
